@@ -15,7 +15,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "rg-aulainfra" {
   name = "aulainfracloudterra"
-  location = "eastus"
+  location = "centralus"
 }
 
 resource "azurerm_virtual_network" "vnet-aulainfra" {
@@ -101,8 +101,8 @@ resource "azurerm_network_interface_security_group_association" "nic-nsg-aulainf
     network_security_group_id = azurerm_network_security_group.nsg-aulainfra.id
 }
 
-resource "azurerm_storage_account" "sa-aulainfra" {
-    name = "saaulainfra"
+resource "azurerm_storage_account" "sa-aulainfra1" {
+    name = "saaulainfra1"
     resource_group_name = azurerm_resource_group.rg-aulainfra.name
     location = azurerm_resource_group.rg-aulainfra.location
     account_tier = "Standard"
@@ -115,11 +115,11 @@ resource "azurerm_storage_account" "sa-aulainfra" {
 
 resource "azurerm_linux_virtual_machine" "vm-aulainfra" {
     name                  = "vm"
-    location              = "eastus"
+    location              = azurerm_resource_group.rg-aulainfra.location
     resource_group_name   = azurerm_resource_group.rg-aulainfra.name
     network_interface_ids = [azurerm_network_interface.nic-aulainfra.id]
     # size                  = "Standard_DS1_v2"
-    size                  = "Standard_D32ads_v5"
+    size                  = "Standard_D2as_v5"
 
     admin_username = "adminuser"
     admin_password = "Password1234!"
@@ -139,7 +139,7 @@ resource "azurerm_linux_virtual_machine" "vm-aulainfra" {
     }
 
     boot_diagnostics {
-      storage_account_uri = azurerm_storage_account.sa-aulainfra.primary_blob_endpoint
+      storage_account_uri = azurerm_storage_account.sa-aulainfra1.primary_blob_endpoint
     }
 
     # computer_name  = "vm"
